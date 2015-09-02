@@ -32,9 +32,9 @@ class HNScraper
       comments = doc.search('.default')
       comments.each do |comment|
         user_id = comment.search('.comhead > a:first-child').inner_text
-        days_ago = comment.search('.comhead > a:nth-child(2)').inner_text
+        time_ago = comment.search('.comhead > a:nth-child(2)').inner_text
         text = comment.search('.comment > span:first-child').inner_text
-        comment_instance = Comment.new(user_id, days_ago, text)
+        comment_instance = Comment.new(user_id, time_ago, text)
         post.add_comment(comment_instance)
       end
 
@@ -56,7 +56,7 @@ class HNScraper
       puts "                               Comments                                  ".green
       post.comments.each do |comment|
 
-        puts "#{comment.user_id} - #{comment.days_ago}".blue
+        puts "#{comment.user_id} - #{comment.time_ago}".blue
         puts "#{comment.text}"
         puts "-------------------------------------------------------------------------"
 
@@ -73,14 +73,22 @@ end
 if !ARGV.empty?
   if ARGV[0].include?("www") or ARGV[0].include?("http")
     # The user enters a URL
-    post = HNScraper.create_post_from_url(ARGV[0])
-    HNScraper.print_stats(post)
-    HNScraper.print_post(post)
+    begin
+      post = HNScraper.create_post_from_url(ARGV[0])
+      HNScraper.print_stats(post)
+      HNScraper.print_post(post)
+    rescue
+      puts "The URL provided cannot be loaded".red
+    end
   else
     # The user inputs a local file path
-    post = HNScraper.create_post_from_file(ARGV[0])
-    HNScraper.print_stats(post)
-    HNScraper.print_post(post)
+    begin
+      post = HNScraper.create_post_from_file(ARGV[0])
+      HNScraper.print_stats(post)
+      HNScraper.print_post(post)
+    rescue
+      puts "The file path provided was not found".red
+    end
   end
 else
  puts "Specify URL of FilePath to scrape from"

@@ -1,10 +1,10 @@
 class Comment
 
-  attr_reader :user_id, :days_ago, :text
+  attr_reader :user_id, :time_ago, :text
 
-  def initialize(user_id, days_ago, text)
+  def initialize(user_id, time_ago, text)
     @user_id = user_id
-    @days_ago = days_ago
+    @time_ago = time_ago
     @text = text
   end
 
