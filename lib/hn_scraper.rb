@@ -3,6 +3,7 @@ require_relative 'comment'
 require 'nokogiri'
 require 'open-uri'
 require 'pry'
+require 'colorize'
 
 class HNScraper
 
@@ -42,9 +43,25 @@ class HNScraper
     end
 
     def print_stats(post)
-      puts "Post title: #{post.title}"
-      puts "Number of comments: #{post.comments.length}"
-      puts "User ID with the most comments: #{post.get_user_most_comments}"
+      puts "Post title: #{post.title}".green
+      puts "Number of comments: #{post.comments.length}".green
+      puts "User ID with the most comments: #{post.get_user_most_comments}".green
+    end
+
+    def print_post(post)
+      puts "*************************************************************************"
+      puts "#{post.title}".yellow
+      puts "Points: #{post.points} - Item ID: #{post.item_id}"
+      puts "URL: #{post.url}"
+      puts "                               Comments                                  ".green
+      post.comments.each do |comment|
+
+        puts "#{comment.user_id} - #{comment.days_ago}".blue
+        puts "#{comment.text}"
+        puts "-------------------------------------------------------------------------"
+
+      end
+      puts "*************************************************************************"
     end
 
   end
@@ -56,10 +73,14 @@ end
 if !ARGV.empty?
   if ARGV[0].include?("www") or ARGV[0].include?("http")
     # The user enters a URL
-    HNScraper.print_stats(HNScraper.create_post_from_url(ARGV[0]))
+    post = HNScraper.create_post_from_url(ARGV[0])
+    HNScraper.print_stats(post)
+    HNScraper.print_post(post)
   else
     # The user inputs a local file path
-    HNScraper.print_stats(HNScraper.create_post_from_file(ARGV[0]))
+    post = HNScraper.create_post_from_file(ARGV[0])
+    HNScraper.print_stats(post)
+    HNScraper.print_post(post)
   end
 else
  puts "Specify URL of FilePath to scrape from"
