@@ -18,4 +18,17 @@ class Post
     @comments << comment
   end
 
+  def num_comments(user_id)
+    @comments.inject(0) do |num, comment|
+      num += comment.user_id == user_id ? 1 : 0
+      num
+    end
+  end
+
+  def get_user_most_comments
+    @comments.inject do |user, comment|
+      num_comments(user) > num_comments(comment.user_id) ? user : comment.user_id
+    end
+  end
+
 end

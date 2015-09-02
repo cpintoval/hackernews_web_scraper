@@ -2,13 +2,15 @@ require_relative 'post'
 require_relative 'comment'
 require 'nokogiri'
 require 'open-uri'
+require 'pry'
 
 class HNScraper
 
   class << self
 
     def create_post_from_url(url)
-
+      doc = Nokogiri::HTML(open(url))
+      create_post(doc)
     end
 
     def create_post_from_file(file_path)
@@ -39,9 +41,26 @@ class HNScraper
 
     end
 
+    def print_stats(post)
+      puts "Post title: #{post.title}"
+      puts "Number of comments: #{post.comments.length}"
+      puts "User ID with the most comments: #{post.get_user_most_comments}"
+    end
+
   end
 
 end
 
-new_post = HNScraper.create_post_from_file('../post.html')
-puts new_post.comments.length
+# Program executable
+
+if !ARGV.empty?
+  if ARGV[0].include?("www") or ARGV[0].include?("http")
+    # The user enters a URL
+    HNScraper.print_stats(HNScraper.create_post_from_url(ARGV[0]))
+  else
+    # The user inputs a local file path
+    HNScraper.print_stats(HNScraper.create_post_from_file(ARGV[0]))
+  end
+else
+ puts "Specify URL of FilePath to scrape from"
+end

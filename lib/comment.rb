@@ -1,6 +1,6 @@
 class Comment
 
-  attr_reader :post, :user_id, :days_ago, :text
+  attr_reader :user_id, :days_ago, :text
 
   def initialize(user_id, days_ago, text)
     @user_id = user_id
